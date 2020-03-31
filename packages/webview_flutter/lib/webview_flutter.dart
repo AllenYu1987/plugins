@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -659,24 +658,6 @@ class WebViewController {
   /// Returns the title of the currently loaded page.
   Future<String> getTitle() {
     return _webViewPlatformController.getTitle();
-  }
-
-  /// Pause the webview.
-  Future<void> pause() {
-    if (Platform.isAndroid) {
-      return _webViewPlatformController.pause();
-    } else {
-      return null;
-    }
-  }
-
-  ///Resume the webview.
-  Future<void> resume() {
-    if (Platform.isAndroid) {
-      return _webViewPlatformController.resume();
-    } else {
-      return null;
-    }
   }
 }
 
