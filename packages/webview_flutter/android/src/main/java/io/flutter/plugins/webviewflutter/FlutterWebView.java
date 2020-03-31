@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.view.View;
 import android.webkit.WebStorage;
 import android.webkit.WebViewClient;
+import android.webkit.WebSettings;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -49,6 +50,15 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
     // Allow local storage.
     webView.getSettings().setDomStorageEnabled(true);
     webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+
+    webView.getSettings().setAllowFileAccess(true);
+    webView.getSettings().setAllowContentAccess(true);
+    webView.getSettings().setAllowFileAccessFromFileURLs(true);
+    webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+      webView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
+    }
 
     methodChannel = new MethodChannel(messenger, "plugins.flutter.io/webview_" + id);
     methodChannel.setMethodCallHandler(this);
@@ -158,6 +168,12 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
       case "getTitle":
         getTitle(result);
         break;
+        case "pause":
+        pause(result);
+        break;
+      case "resume":
+        resume(result);
+        break;
       default:
         result.notImplemented();
     }
@@ -252,6 +268,16 @@ public class FlutterWebView implements PlatformView, MethodCallHandler {
 
   private void getTitle(Result result) {
     result.success(webView.getTitle());
+  }
+
+  private void pause(Result result){
+    webView.onPause();
+    result.success(null);
+  }
+
+  private void resume(Result result){
+    webView.onResume();
+    result.success(null);
   }
 
   private void applySettings(Map<String, Object> settings) {
